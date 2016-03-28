@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <title>СПБ Чат</title>
+        <link rel="icon" type="image/png" href="res/img/favicon-196x196.png" sizes="196x196">
+        <link rel="icon" type="image/png" href="res/img/favicon-128x128.png" sizes="128x128">
+        <link rel="icon" type="image/png" href="res/img/favicon-96x96.png" sizes="96x96">
+        <link rel="icon" type="image/png" href="res/img/favicon-32x32.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="res/img/favicon-16x16.png" sizes="16x16">
+        <link rel="apple-touch-icon" href="res/img/apple-touch-icon.png">
+        <link rel="stylesheet" href="css/index.css">
+        <script type="text/javascript" src="js/index.js"></script>
+    </head>
+    <body onload="checkPrerequisites()">
+        <!-- no-script message -->
+        <noscript>
+            <div class="no-script-message">
+                <div class="outer">
+                    <div class="inner">
+                        <div class="header">
+                            JavaScript is disabled
+                        </div>
+                        <div class="content">
+                            JavaScript is disabled in your web browser. This web chat requires it to be enabled to run properly.<br>
+                            <strong>Please change settings of your web browser to enable JavaScript, then refresh the page.</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </noscript>
+
+        <div id="update-message" class="hidden">
+            <div class="outer">
+                <div class="inner">
+                    <!-- browser is outdated error -->
+                    <div class="browser-outdated message-box">
+                        <div class="header">
+                            Your web browser is outdated
+                        </div>
+                        <div class="content">
+                            <span>
+                                Please update your web browser or try to install web browser from a different vendor.
+                                You may find download links for most popular, fast, modern and secure web browsers in the list below.
+                            </span>
+                            <div class="details">
+                                <div id="details-header">
+                                    ► Show details
+                                </div>
+                                <div id="details-content" class="hidden">
+                                    <!-- list of unsupported capabilities -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- update browser message -->
+                    <div class="update-browser message-box">
+                        <div class="header">
+                            Update your web browser
+                        </div>
+                        <div class="content">
+                            <div class="list">
+                                <div class="entry">
+                                    <a href="http://www.google.com/chrome/" target="_blank" class="chrome">
+                                        <span class="browser">Chrome</span>
+                                        <span class="vendor">Google</span>
+                                    </a>
+                                </div>
+                                <div class="entry">
+                                    <a href="http://www.mozilla.com/firefox/" target="_blank" class="firefox">
+                                        <span class="browser">FireFox</span>
+                                        <span class="vendor">Mozilla Foundation</span>
+                                    </a>
+                                </div>
+                                <div class="entry">
+                                    <a href="http://www.apple.com/safari/" target="_blank" class="safari">
+                                        <span class="browser">Safari</span>
+                                        <span class="vendor">Apple</span>
+                                    </a>
+                                </div>
+                                <div class="entry">
+                                    <a href="http://www.microsoft.com/ie/" target="_blank" class="iexplorer">
+                                        <span class="browser">Internet Explorer</span>
+                                        <span class="vendor">Microsoft</span>
+                                    </a>
+                                </div>
+                                <div class="entry">
+                                    <a href="http://www.opera.com/browser/" target="_blank" class="opera">
+                                        <span class="browser">Opera</span>
+                                        <span class="vendor">Opera Software</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,109 @@
+
+@import url(base.css);
+
+/* global styles */
+
+body {
+    background-color: #CC9966;
+}
+
+/* login dialog */
+
+#login {
+    display: table;
+    width: 100%;
+    height: 100%;
+    background-color: #FFE7D6;
+}
+
+#login .outer {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+#login .middle {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#login .inner {
+    width: 15em;
+    margin: 0 auto;
+    background-color: #CC9966;
+    border: 1px solid gray;
+    border-bottom: 1px solid #555555;
+    border-right: 1px solid #555555;
+    box-shadow: 2px 2px 4px rgba(50, 50, 50, 0.75);
+}
+
+#login .header {
+    padding: 0.125em;
+    color: white;
+    font-size: 0.9375em;
+    font-weight: bold;
+    text-align: center;
+    background-color: #A76E00;
+}
+
+#login .content {
+    padding: 0.5em;
+    text-align: center;
+}
+
+#login .credentials {
+    padding: 0.5em 1em;
+}
+
+#login .username,
+#login .password {
+    padding: 0.125em;
+}
+
+#login label {
+    display: block;
+    margin: 0.125em;
+    font-size: 0.875em;
+}
+
+#username,
+#password {
+    width: 100%;
+    text-align: center;
+}
+
+#progress {
+    display: none;
+}
+
+#status {
+    display: block;
+    margin: 0.5em;
+    font-size: 0.875em;
+    color: white;
+}
+
+#login button {
+    width: 9em;
+    margin: 0.5em;
+}
+
+@media only screen and (max-width: 20em) {
+    #login {
+        background-color: #CC9966;
+    }
+
+    #login .inner {
+        width: 100%;
+        border: none;
+        box-shadow: none;
+    }
+
+    #login .header {
+        position: fixed;
+        padding: 0.25em;
+        width: 100%;
+        top: 0;
+        left: 0;
+    }
+}

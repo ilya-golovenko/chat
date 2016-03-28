@@ -1,0 +1,6 @@
+# Force line ending normalization
+* text=auto
+
+*.html text
+*.css text
+*.js text

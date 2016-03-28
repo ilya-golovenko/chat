@@ -1,0 +1,196 @@
+
+@import url(base.css);
+
+/* no-script message */
+
+.no-script-message {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+.no-script-message .outer {
+    display: table;
+    margin: 0 auto;
+    height: 100%;
+}
+
+.no-script-message .inner {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.no-script-message .header {
+    padding: 0.125em 0.5em;
+    color: white;
+    font-weight: bold;
+    background-color: #8B0000;
+}
+
+.no-script-message .content {
+    padding: 0.5em;
+    border: 1px solid #8B0000;
+}
+
+/* update message */
+
+#update-message {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+#update-message .outer {
+    display: table;
+    margin: 0 auto;
+    height: 100%;
+}
+
+#update-message .inner {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+/* message box */
+
+.message-box {
+    width: 38em;
+    margin: 0.5em;
+    color: black;
+    background-color: white;
+}
+
+.message-box .header {
+    padding: 0.125em 0.5em;
+    color: white;
+    font-weight: bold;
+    background-color: #696969;
+}
+
+.message-box .content {
+    padding: 0.5em;
+}
+
+/* browser outdated message */
+
+.browser-outdated {
+    border: 1px solid #B8860B;
+}
+
+.browser-outdated .header {
+    background-color: #DAA520;
+}
+
+/* browser outdated details */
+
+.browser-outdated .details {
+    margin-top: 0.5em;
+    font-size: 0.8125em;
+    font-weight: bold;
+    padding: 0.25em;
+    color: #444444;
+}
+
+#details-header {
+    padding: 0.25em;
+    cursor: pointer;
+    background-color: #FAFAD2;
+}
+
+#details-header:hover {
+    background-color: #EEE8AA;
+}
+
+#details-content {
+    background-color: #FAFAD2;
+}
+
+#details-content .title {
+    display: list-item;
+    margin-left: 24px;
+    padding: 0.25em;
+    *vertical-align: middle;
+}
+
+#details-content .text {
+    display: block;
+    padding-top: 0.0625em;
+    font-weight: normal;
+}
+
+/* update browser message */
+
+.update-browser {
+    border: 1px solid green;
+}
+
+.update-browser .header {
+    background-color: green;
+}
+
+.update-browser .content {
+    display: table;
+    width: 100%;
+}
+
+.update-browser .list {
+    display: table-row;
+    vertical-align: middle;
+}
+
+.update-browser .entry {
+    display: table-cell;
+    width: 20%;
+    padding: 0.25em;
+    *float: left;
+    *width: 117px;
+    *padding: 0;
+    *margin: 0;
+}
+
+.update-browser a {
+    display: block;
+    padding: 66px 2px 2px 2px;
+    text-align: center;
+    text-decoration: none;
+    background-repeat: no-repeat;
+    background-position: center top;
+}
+
+.update-browser a:hover {
+    background-color: #FAFAD2;
+}
+
+.update-browser a.chrome {
+    background-image: url(../res/img/browsers/chrome.png);
+}
+
+.update-browser a.firefox {
+    background-image: url(../res/img/browsers/firefox.png);
+}
+
+.update-browser a.safari {
+    background-image: url(../res/img/browsers/safari.png);
+}
+
+.update-browser a.iexplorer {
+    background-image: url(../res/img/browsers/iexplorer.png);
+}
+
+.update-browser a.opera {
+    background-image: url(../res/img/browsers/opera.png);
+}
+
+.update-browser .browser {
+    display: block;
+    padding: 0.25em;
+    color: black;
+    font-size: 0.875em;
+    white-space: nowrap;
+}
+
+.update-browser .vendor {
+    display: block;
+    font-size: 0.6875em;
+    color: #AAAAAA;
+}

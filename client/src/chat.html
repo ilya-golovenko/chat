@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <title>СПБ Чат</title>
+        <link rel="icon" type="image/png" href="res/img/favicon-196x196.png" sizes="196x196">
+        <link rel="icon" type="image/png" href="res/img/favicon-128x128.png" sizes="128x128">
+        <link rel="icon" type="image/png" href="res/img/favicon-96x96.png" sizes="96x96">
+        <link rel="icon" type="image/png" href="res/img/favicon-32x32.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="res/img/favicon-16x16.png" sizes="16x16">
+        <link rel="apple-touch-icon" href="res/img/apple-touch-icon.png">
+        <link rel="stylesheet" href="css/chat.css">
+
+        <script>
+            //TODO: for debugging purposes
+            window.onerror=function(m,u,l){alert(m+"\n"+u+":"+l);};
+        </script>
+
+        <script type="text/javascript" src="js/core.js"></script>
+        <script type="text/javascript" src="js/chat.js"></script>
+        <script type="text/javascript" src="js/server.js"></script>
+    </head>
+    <body>
+        <div class="wrap">
+            <div class="layout">
+                <!-- main chat panel -->
+                <div id="chat">
+                    <div class="outer">
+                        <div class="inner">
+                            <div class="content">
+                                <!-- received chat messages will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- user list panel -->
+                <div id="userlist" tabindex="-1">
+                    <div class="outer">
+                        <div class="inner">
+                            <div class="header">
+                                <div class="count">
+                                    Сейчас в чате: <span class="value">?</span>
+                                </div>
+                                <div class="connection" title="Connecting...">
+                                    ●
+                                </div>
+                            </div>
+                            <div class="content-outer">
+                            <div class="content-inner">
+                            <div class="content">
+                                <div class="progress">
+                                    <img src="res/img/progress.gif" alt="Loading..." width="16" height="16">
+                                    <p>Loading, please wait...</p>
+                                </div>
+                                <!-- on-line chat users will be inserted here -->
+                            </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- input panel -->
+            <form id="input" tabindex="-1">
+                <div class="outer">
+                    <div class="inner">
+                        <div class="cell">
+                            <input id="username" type="text" readonly>
+                        </div>
+                        <input id="message" type="text" maxlength="600" autocomplete="off" autofocus>
+                        <div class="cell">
+                            <button id="send" type="submit">></button>
+                            <button id="clear" type="reset">Очистить</button>
+                            <button id="exit" type="button">Выход</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <template>
+            <p class="message">
+                <span class="timestamp"></span>
+                <span class="username"></span>
+                <span class="text"></span>
+            </p>
+
+            <span class="user">
+                <span class="gender"></span>
+                <span class="personal">»</span>
+                <span class="name-container">
+                    <span class="name"></span>
+                    <span class="access"></span>
+                </span>
+                <span class="status-container">
+                    <span class="status"></span>
+                </span>
+            </span>
+        </template>
+    </body>
+</html>

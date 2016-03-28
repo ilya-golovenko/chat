@@ -1,0 +1,449 @@
+
+@import url(base.css);
+
+/* page layout */
+
+.wrap {
+    display: table;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #CC9966;
+}
+
+.layout {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+/* chat panel */
+
+#chat {
+    display: table-cell;
+    width: 100%;
+    height: 100%;
+    background-color: #FFE7D6;
+}
+
+#chat .outer {
+    width: 100%;
+    height: 100%;
+}
+
+#chat .inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+#chat .content {
+    position: absolute;
+    width: 100%;
+}
+
+/* chat panel scrollbar */
+
+#chat ::-webkit-scrollbar {
+    width: 14px;
+}
+
+#chat ::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+#chat ::-webkit-scrollbar-thumb {
+    background-color: rgba(204, 153, 102, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+/* chat message common */
+
+.message {
+    margin: 2px;
+    color: black;
+    font-size: 0.8125em;
+    word-wrap: break-word;
+}
+
+.message .timestamp {
+    font-size: 0.8125em;
+    color: #CC9966;
+}
+
+.message .timestamp.highlight {
+    color: red;
+    background-color: white;
+}
+
+.message .username {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.message .username:hover {
+    color: red;
+    background-color: lightyellow;
+}
+
+/* public chat message */
+
+.message.public .username:after {
+    content: ':';
+    font-weight: bold;
+}
+
+.message.public.received .text {
+    font-weight: bold;
+}
+
+/* personal chat message */
+
+.message.personal .username {
+    background-color: #BBEEBB;
+}
+
+.message.personal .username:before {
+    content: 'Лично от ';
+    font-size: 0.8125em;
+    font-weight: normal;
+}
+
+.message.personal .username:after {
+    content: ':';
+    font-weight: bold;
+}
+
+.message.personal.sent .username {
+    background-color: #FFEEBB;
+}
+
+.message.personal.sent .username:before {
+    content: 'Лично для ';
+    font-size: 0.8125em;
+    font-weight: normal;
+}
+
+/* system chat message */
+
+.message.system {
+    color: #D2691E;
+    font-size: 0.8125em;
+}
+
+.message.system:before {
+    content: '● ';
+    color: #D2691E;
+    font-size: 0.8125em;
+}
+
+/* join chat message */
+
+.message.join {
+    color: #227711;
+    font-size: 0.8125em;
+}
+
+.message.join .username {
+    font-weight: bold;
+}
+
+.message.join .text {
+    margin-left: 4px;
+}
+
+/* leave chat message */
+
+.message.leave {
+    color: #555599;
+    font-size: 0.8125em;
+}
+
+.message.leave .username {
+    font-weight: bold;
+}
+
+.message.leave .text {
+    margin-left: 4px;
+}
+
+/* userlist panel */
+
+#userlist {
+    display: table-cell;
+    width: 20em;
+    height: 100%;
+    background-color: #CC9966;
+}
+
+#userlist.autohide {
+    width: 1rem;
+}
+
+#userlist .outer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #CC9966;
+    transition: all 0.5s cubic-bezier(0, 0.75, 0.25, 1);
+}
+
+#userlist.autohide .outer {
+    position: absolute;
+    width: 20em;
+    height: calc(100% - 2rem);
+    right: 0;
+    top: 0;
+    transition: all 0.5s cubic-bezier(0, 0.75, 0.25, 1);
+}
+
+#userlist.hidden .outer {
+    left: calc(100% - 1rem);
+    transition: all 0.5s cubic-bezier(0, 0.75, 0.25, 1);
+}
+
+#userlist .inner {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#userlist .header {
+    display: table;
+    width: 100%;
+    padding: 4px 0;
+    background-color: #A76E00;
+}
+
+#userlist.autohide .header:before {
+    content: '◄';
+}
+
+#userlist .count {
+    display: table-cell;
+    vertical-align: middle;
+    color: #F8F8FF;
+    font-size: 0.8125em;
+    font-weight: bold;
+    text-align: center;
+}
+
+#userlist .connection {
+    display: table-cell;
+    vertical-align: middle;
+    padding-right: 2px;
+    width: 1px;
+    color: dimgray;
+    cursor: default;
+}
+
+#userlist .connection.open {
+    color: green;
+}
+
+#userlist .connection.lost {
+    color: red;
+}
+
+#userlist .content-outer {
+    position: relative;
+    width: 100%;
+    height: calc(100% - 2rem);
+}
+
+#userlist .content-inner {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+#userlist .content {
+    display: table;
+    width: 100%;
+    padding: 2px;
+}
+
+#userlist.hidden .content {
+    padding-left: 1rem;
+}
+
+#userlist .progress {
+    display: table-cell;
+    padding-top: 16px;
+    text-align: center;
+    font-size: 0.875em;
+    color: #F8F8FF;
+}
+
+/* userlist panel scrollbar */
+
+#userlist ::-webkit-scrollbar {
+    width: 6px;
+}
+
+#userlist ::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+#userlist ::-webkit-scrollbar-thumb {
+    background-color: rgba(167, 110, 0, 0.25);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* userlist panel user */
+
+.user {
+    display: table-row;
+    white-space: nowrap;
+    line-height: 1em;
+}
+
+.user:nth-child(even) {
+    background-color: #D0A070;
+}
+
+.user .gender {
+    display: table-cell;
+    width: 1px;
+    padding: 1px;
+    color: #333399;
+    font-size: 0.75em;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.user .personal {
+    display: table-cell;
+    width: 1px;
+    padding: 1px;
+    color: white;
+    font-size: 0.875em;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.user .personal.self {
+    cursor: auto;
+}
+
+.user .name-container {
+    display: table-cell;
+    width: 1px;
+    padding: 1px;
+}
+
+.user .name {
+    color: #666699;
+    font-size: 0.8125em;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.user .name:hover {
+    color: white;
+}
+
+.user .name.self {
+    color: #B07050;
+    cursor: auto;
+}
+
+.user .name.long {
+    font-size: 0.75em;
+}
+
+.user .access {
+    padding-left: 2px;
+    color: firebrick;
+    font-size: 0.6875em;
+    font-weight: bold;
+}
+
+.user .status-container {
+    display: table-cell;
+    padding: 1px;
+    text-align: right;
+}
+
+.user .status {
+    color: #FFE7D6;
+    font-size: 0.625em;
+}
+
+.user .status.join {
+    color: #006600;
+    background-color: #DDFFDD;
+}
+
+.user .status.away {
+    color: #666699;
+}
+
+.user .status.lost {
+    color: red;
+    background-color: #FFEEBB;
+}
+
+/* input panel */
+
+#input {
+    display: table-row;
+    width: 100%;
+    height: 2rem;
+    background-color: #CC9966;
+}
+
+#input .outer {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+#input .inner {
+    display: table-row;
+    white-space: nowrap;
+}
+
+#input .cell {
+    display: table-cell;
+    width: 1px;
+    padding: 4px;
+}
+
+#username {
+    width: 10em;
+    text-align: center;
+}
+
+#message {
+    width: 100%;
+}
+
+@media screen and (max-width: 30em) {
+    #chat ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .message {
+        line-height: 1.5em;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .user {
+        line-height: 1.5em;
+    }
+
+    #send {
+        width: auto;
+    }
+}
+
+@media screen and (max-width: 20em) {
+    #userlist.autohide .outer {
+        width: 100%;
+    }
+}

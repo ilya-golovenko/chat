@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <title>СПБ Чат</title>
+        <link rel="icon" type="image/png" href="res/img/favicon-196x196.png" sizes="196x196">
+        <link rel="icon" type="image/png" href="res/img/favicon-128x128.png" sizes="128x128">
+        <link rel="icon" type="image/png" href="res/img/favicon-96x96.png" sizes="96x96">
+        <link rel="icon" type="image/png" href="res/img/favicon-32x32.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="res/img/favicon-16x16.png" sizes="16x16">
+        <link rel="apple-touch-icon" href="res/img/apple-touch-icon.png">
+        <link rel="stylesheet" href="css/login.css">
+        <script type="text/javascript" src="js/core.js"></script>
+        <script type="text/javascript" src="js/login.js"></script>
+        <script type="text/javascript" src="js/server.js"></script>
+    </head>
+    <body>
+        <!-- login dialog -->
+        <form id="login">
+            <div class="outer">
+                <div class="middle">
+                    <div class="inner">
+                        <div class="header">
+                            СПБ Чат 2.0
+                        </div>
+                        <div class="content">
+                            <div class="credentials">
+                                <div class="username">
+                                    <label for="username">Ник в чате</label>
+                                    <input id="username" type="text" maxlength="16" autocomplete="off" autofocus required>
+                                </div>
+                                <div class="password">
+                                    <label for="password">Пароль</label>
+                                    <input id="password" type="password" maxlength="32" required>
+                                </div>
+                            </div>
+                            <img id="progress" src="res/img/progress.gif" alt="Connecting..." width="16" height="16">
+                            <span id="status"><!-- status message --></span>
+                            <button id="submit" type="submit">Вход в чат</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </body>
+</html>
