@@ -2,44 +2,45 @@
 var Users = (function() {
     'use strict';
 
-    var users = {
-        'user1': { name: 'User1', gender: 'male', status: { text: 'ON-LINE' } },
-        'user2': { name: 'User2', gender: 'female', status: { type: 'away', text: 'AWAY: 14:35' } },
+    var $users = {
         'walrus': { name: 'Walrus', gender: 'male', status: { type: 'join', text: 'ВХОД В ЧАТ' }, access: 1000 },
-        'user4': { name: 'User4', gender: 'female', status: { text: 'ON-LINE' } },
-        'user5': { name: 'User5', gender: 'male', status: { type: 'lost', text: 'НЕТ СВЯЗИ' } },
+        'alter': { name: 'Alter', gender: 'male', status: { text: 'ON-LINE' } },
+        'alexxx': { name: 'AleXXX', gender: 'female', status: { type: 'away', text: 'AWAY: 14:35' } },
+        'simplyuser': { name: 'SimplyUser', gender: 'female', status: { text: 'ON-LINE' } },
+        'anotheruser': { name: 'AnotherUser', gender: 'male', status: { type: 'lost', text: 'НЕТ СВЯЗИ' } },
         'somelongusername': { name: 'SomeLongUserName', gender: 'female', status: { text: 'ON-LINE' } }
     };
 
-    var passwords = {
+    var $passwords = {
         'walrus': 'test'
     };
 
-    var styles = {
-      'walrus': { image: { url: '../res/img/users/walrus.gif', width: 84, height: 28 }, text: { color: 'purple' } },
-      'user1': { name: { color: 'olive', font: { family: 'Arial', size: '0.75em' } }, text: { color: 'darkgreen', font: { family: 'Arial', size: '0.75em' } } }
+    var $styles = {
+      'walrus': { image: { url: 'res/img/users/walrus.gif', width: 84, height: 28 }, text: { color: 'purple' } },
+      //'alexxx': { image: { url: 'res/img/users/alexxx.gif', width: 84, height: 28 }, text: { color: 'black' } },
+      'alter': { name: { color: 'olive', font: { family: 'Arial', size: '1.25em' } }, text: { color: 'darkgreen', font: { family: 'Arial', size: '1.25em' } } }
     };
 
     function loadOnlineUsers() {
-        var users = sessionStorage.getItem('chat.server:online-users');
+        var names = sessionStorage.getItem('chat.server:online-users');
 
-        if (users) {
-            users = JSON.parse(users);
+        if (names) {
+            names = JSON.parse(names);
         }
 
-        return users || [];
+        return names || [];
     }
 
-    function saveOnlineUsers(users) {
-        sessionStorage.setItem('chat.server:online-users', JSON.stringify(users));
+    function saveOnlineUsers(names) {
+        sessionStorage.setItem('chat.server:online-users', JSON.stringify(names));
     }
 
     return {
         findUser: function(name) {
             name = name.toLowerCase();
 
-            if (users.hasOwnProperty(name)) {
-                return users[name];
+            if ($users.hasOwnProperty(name)) {
+                return $users[name];
             }
 
             return undefined;
@@ -48,8 +49,8 @@ var Users = (function() {
         findUserStyle: function(name) {
             name = name.toLowerCase();
 
-            if (styles.hasOwnProperty(name)) {
-                return styles[name];
+            if ($styles.hasOwnProperty(name)) {
+                return $styles[name];
             }
 
             return undefined;
@@ -58,15 +59,35 @@ var Users = (function() {
         loginUser: function(name, password) {
             name = name.toLowerCase();
 
-            if (passwords.hasOwnProperty(name)) {
-                return passwords[name] === password;
+            if ($passwords.hasOwnProperty(name)) {
+                return $passwords[name] === password;
             }
 
             return false;
         },
 
+        getAllUserNames: function() {
+            var names = [];
+
+            for (var name in $users) {
+                if ($users.hasOwnProperty(name)) {
+                    names.push(name);
+                }
+            }
+
+            return names;
+        },
+
         getOnlineUsers: function() {
-            return loadOnlineUsers();
+            var users = [];
+
+            var names = loadOnlineUsers();
+
+            for (var i = 0, n = names.length; i < n; i += 1) {
+                users.push($users[names[i]]);
+            }
+
+            return users;
         },
 
         addOnlineUser: function(name) {
@@ -74,11 +95,14 @@ var Users = (function() {
 
             name = name.toLowerCase();
 
-            if (users.hasOwnProperty(name)) {
-                var onlineUsers = loadOnlineUsers();
-                onlineUsers.push(users[name]);
-                saveOnlineUsers(onlineUsers);
-                user = users[name];
+            var names = loadOnlineUsers(),
+                index = names.indexOf(name);
+
+            if (index < 0)
+            {
+                names.push(name);
+                saveOnlineUsers(names);
+                user = $users[name];
             }
 
             return user;
@@ -89,29 +113,16 @@ var Users = (function() {
 
             name = name.toLowerCase();
 
-            var onlineUsers = loadOnlineUsers();
+            var names = loadOnlineUsers(),
+                index = names.indexOf(name);
 
-            for (var i = 0, n = onlineUsers.length; i < n; i += 1) {
-                if (name === onlineUsers[i].name.toLowerCase()) {
-                    user = onlineUsers[i];
-                    onlineUsers.splice(i, 1);
-                    saveOnlineUsers(onlineUsers);
-                    break;
-                }
+            if (index >= 0) {
+                names.splice(index, 1);
+                saveOnlineUsers(names);
+                user = $users[name];
             }
 
             return user;
-        },
-
-        addRandomOnlineUser: function() {
-
-        },
-
-        removeRandomOnlineUser: function() {
-            if (onlineUsers.length > 0) {
-                var random = Chat.Util.random(0, onlineUsers.length - 1);
-
-            }
         }
     };
 })();
@@ -188,6 +199,14 @@ var Server = (function() {
 
     // Private methods
 
+    function getRandomNumber(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    function getRandomArrayIndex(array) {
+        return Math.floor(Math.random() * array.length);
+    }
+
     function generateSession() {
         var session = '';
 
@@ -263,26 +282,6 @@ var Server = (function() {
         }
     }
 
-    function sendPublicOrPrivateMessage() {
-        var random = Math.random();
-        var username = 'User1';
-
-        var message = {
-            subtype: 'public',
-            username: username,
-            timestamp: Date.now(),
-            text: 'This is a ' + (random > 0.9 ? 'personal' : 'public') + ' message #' + lastMessageNum++
-        };
-
-        if (random < 0.1) {
-            message.text = 'Walrus: ' + message.text;
-        } else if (random > 0.9) {
-            message.subtype = 'personal';
-        }
-
-        sendMessage(message, username);
-    }
-
     function addOnlineUser(username) {
         var user = Users.addOnlineUser(username);
 
@@ -298,6 +297,8 @@ var Server = (function() {
 
         if (typeof user === 'object') {
             publishServerEvent('users.leave', user);
+
+            sendLeaveMessage(user.name);
         }
     }
 
@@ -353,28 +354,103 @@ var Server = (function() {
         sendMessage(message);
     }
 
+    function sendRandomMessage() {
+        var users = Users.getOnlineUsers();
+
+        if (users.length > 0)
+        {
+            var index = getRandomArrayIndex(users),
+                username = users[index].name;
+
+            if (username.toLowerCase() !== 'walrus') {
+                var random = Math.random(),
+                    personal = random > 0.9,
+                    direct = random < 0.5;
+
+                if (users.length === 1) {
+                    personal = false;
+                    direct = false;
+                }
+
+                var message = {
+                    subtype: 'public',
+                    username: username,
+                    timestamp: Date.now(),
+                    text: 'This is a ' + (personal ? 'personal' : 'public') + ' message #' + lastMessageNum++
+                };
+
+                if (personal) {
+                    message.subtype = 'personal';
+                } else if(direct) {
+                    users.splice(index, 1);
+    
+                    if (users.length > 0) {
+                        index = getRandomArrayIndex(users);
+                        message.text = users[index].name + ': ' + message.text;
+                    }
+                }
+
+                sendMessage(message, username);
+            }
+        }
+
+        setTimeout(sendRandomMessage, getRandomNumber(5000, 15000));
+    }
+
+    function addRandomOnlineUser() {
+        if (Math.random() > 0.3) {
+            var usernames = Users.getAllUserNames(),
+                index = getRandomArrayIndex(usernames),
+                username = usernames[index];
+  
+            if (username.toLowerCase() !== 'walrus') {
+                addOnlineUser(username);
+            }
+        }
+
+        setTimeout(addRandomOnlineUser, getRandomNumber(10000, 30000));
+    }
+
+    function removeRandomOnlineUser() {
+        if (Math.random() > 0.7) {
+            var users = Users.getOnlineUsers();
+
+            if (users.length > 0)
+            {
+                var index = getRandomArrayIndex(users),
+                    username = users[index].name;
+
+                if (username.toLowerCase() !== 'walrus') {
+                    removeOnlineUser(username);
+                }
+            }
+        }
+
+        setTimeout(removeRandomOnlineUser, getRandomNumber(30000, 50000));
+    }
+
     // Client event listeners
 
-    Chat.Events.subscribe('chat.client', 'user.session', function(e) {
+    Chat.Events.subscribe('chat.client', 'session.restart', function(e) {
         if (typeof e.data === 'object' &&
             typeof e.data.session === 'string') {
 
             var session = sessionStorage.getItem('chat.server:user.session');
 
             if (session === e.data.session) {
-                publishServerEvent('user.session', { session: session });
+                publishServerEvent('session.started', { session: session });
 
                 sendUserList();
                 sendHistory();
             } else {
-                publishServerEvent('user.session.error', { reason: 'invalid session' });
+                publishServerEvent('session.error', { reason: 'invalid session' });
             }
         } else {
-            publishServerEvent('user.session.error', { reason: 'session required' });
+            publishServerEvent('session.error', { reason: 'session required' });
         }
     });
 
-    Chat.Events.subscribe('chat.client', 'user.login', function(e) {
+    Chat.Events.subscribe('chat.client', 'session.login', function(e) {
         if (typeof e.data === 'object' &&
             typeof e.data.username === 'string' &&
             typeof e.data.password === 'string') {
@@ -390,16 +466,16 @@ var Server = (function() {
 
                 addOnlineUser(username);
 
-                publishServerEvent('user.login', { username: username, session: session });
+                publishServerEvent('session.login', { username: username, session: session });
             } else {
-                publishServerEvent('user.login.error', { reason: 'invalid credentials' });
+                publishServerEvent('session.login.error', { reason: 'invalid credentials' });
             }
         } else {
-            publishServerEvent('user.login.error', { reason: 'credentials required' });
+            publishServerEvent('session.login.error', { reason: 'credentials required' });
         }
     });
 
-    Chat.Events.subscribe('chat.client', 'user.logout', function() {
+    Chat.Events.subscribe('chat.client', 'session.logout', function() {
         var session = sessionStorage.getItem('chat.server:user.session');
         var username = sessionStorage.getItem('chat.server:user.name');
 
@@ -408,11 +484,10 @@ var Server = (function() {
             sessionStorage.removeItem('chat.server:user.name');
 
             removeOnlineUser(username);
-            sendLeaveMessage(username);
 
-            publishServerEvent('user.logout', { session: session });
+            publishServerEvent('session.logout', { session: session });
         } else {
-            publishServerEvent('user.logout.error', { reason: 'not logged in' });
+            publishServerEvent('session.logout.error', { reason: 'not logged in' });
         }
     });
 
@@ -433,6 +508,7 @@ var Server = (function() {
 
     // Initialization
 
-    setInterval(sendPublicOrPrivateMessage, 20000);
-    setTimeout(addOnlineUser.bind(null, 'user1'), 10000);
+    setTimeout(removeRandomOnlineUser, getRandomNumber(20000, 50000));
+    setTimeout(addRandomOnlineUser, getRandomNumber(10000, 30000));
+    setTimeout(sendRandomMessage, getRandomNumber(10000, 30000));
 })();

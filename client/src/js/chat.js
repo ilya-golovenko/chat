@@ -5,7 +5,7 @@
 
 // validate session
 
-if (!Chat.User.getSession()) {
+if (!Chat.Session.Active) {
     return window.location.replace('login.html');
 }
 
@@ -17,7 +17,7 @@ Chat.View.Users = (function(self) {
 
     // Private constants
 
-    var USER_NAME_LONG = 12;
+    var MAX_SHORT_USER_NAME = 12;
 
     // Private members
 
@@ -37,54 +37,36 @@ Chat.View.Users = (function(self) {
 
     function fillGender(user, element) {
         element.addEventListener('click', onUserInfoClick.bind(null, user.name));
-
-        switch (user.gender) {
-            case 'male':
-                element.textContent = '♂';
-                break;
-
-            case 'female':
-                element.textContent = '♀';
-                break;
-
-            default:
-                element.textContent = '?';
-        }
+        element.classList.add(user.gender);
     }
 
     function fillPersonal(user, element) {
-        if (user.self === true) {
-            element.classList.add('self');
-        } else {
+        if (!Chat.Session.isSelf(user.name)) {
             element.addEventListener('click', onUserNameClick.bind(null, user.name, true));
         }
     }
 
-    function fillName(user, container) {
-        var name = container.querySelector('.name');
-
-        if (user.self === true) {
-            name.classList.add('self');
-        } else {
-            name.addEventListener('click', onUserNameClick.bind(null, user.name, false));
+    function fillName(user, element) {
+        if (!Chat.Session.isSelf(user.name)) {
+            element.addEventListener('click', onUserNameClick.bind(null, user.name, false));
         }
 
-        if (user.name.length > USER_NAME_LONG) {
-            name.classList.add('long');
+        if (user.name.length > MAX_SHORT_USER_NAME) {
+            element.classList.add('long');
         }
 
-        name.textContent = user.name;
+        element.textContent = user.name;
+    }
 
+    function fillAccess(user, element) {
         if (typeof user.access === 'number') {
-            container.querySelector('.access').textContent = user.access;
+            element.textContent = user.access;
         }
     }
 
-    function fillStatus(user, container) {
-        var status = container.querySelector('.status');
-
-        status.classList.add(user.status.type);
-        status.textContent = user.status.text;
+    function fillStatus(user, element) {
+        element.classList.add(user.status.type);
+        element.textContent = user.status.text;
     }
 
     function createUserElement(user) {
@@ -94,8 +76,13 @@ Chat.View.Users = (function(self) {
 
         fillGender(user, element.querySelector('.gender'));
         fillPersonal(user, element.querySelector('.personal'));
-        fillName(user, element.querySelector('.name-container'));
-        fillStatus(user, element.querySelector('.status-container'));
+        fillName(user, element.querySelector('.name'));
+        fillAccess(user, element.querySelector('.access'));
+        fillStatus(user, element.querySelector('.status'));
+
+        if (Chat.Session.isSelf(user.name)) {
+            element.classList.add('self');
+        }
 
         return element;
     }
@@ -143,14 +130,6 @@ Chat.View.Users = (function(self) {
         $content = $userlist.querySelector('.content');
         $count = $userlist.querySelector('.count .value');
         $connection = $userlist.querySelector('.connection');
-
-        if (typeof self.settings.visible === 'boolean') {
-          self.visible = self.settings.visible;
-        }
-    };
-
-    self.shutdown = function() {
-        self.settings.visible = self.visible;
     };
 
     self.addUser = function(user) {
@@ -212,16 +191,7 @@ Chat.View.Users = (function(self) {
 
     // Public properties
 
-    Object.defineProperty(self, 'visible', {
-        get: function() {
-            return !$userlist.classList.contains('hidden');
-        },
-        set: function(value) {
-            value === true ? showView() : hideView();
-        }
-    });
-
-    Object.defineProperty(self, 'autoHide', {
+    Object.defineProperty(self, 'AutoHide', {
         get: function() {
             return $userlist.classList.contains('autohide');
         },
@@ -316,7 +286,7 @@ Chat.View.Input = (function(self) {
             var message = $message.value.trim(),
                 username = $username.value.trim();
 
-            if (message.length > 0) {
+            if (message.length !== 0) {
                 $current = 0;
 
                 if ($messages.length < 2 || $messages[1] !== message) {
@@ -329,7 +299,7 @@ Chat.View.Input = (function(self) {
 
                 var data = { message: message };
 
-                if (username.length > 0) {
+                if (username.length !== 0) {
                     data.username = username;
                 }
 
@@ -388,7 +358,7 @@ Chat.View.Input = (function(self) {
 
     // Public properties
 
-    Object.defineProperty(self, 'minimized', {
+    Object.defineProperty(self, 'Minimized', {
         get: function() {
             return $username.classList.contains('hidden');
         },
@@ -424,20 +394,10 @@ Chat.View.Messages = (function(self) {
 
     // Private methods
 
-    function createTimeStamp(message) {
-        var element = Chat.View.createElement('span', 'timestamp', '[' + Chat.View.formatTimeStamp(message.timestamp) + ']');
-
-        element.addEventListener('click', onTimeStampClick.bind(null, message.timestamp));
-
-        if (message.recipient === true) {
-            element.classList.add('highlight');
-        }
-
-        return element;
-    }
-
     function createUserImage(image, username) {
         var element = document.createElement('img');
+
+        element.classList.add('username');
 
         element.src = image.url;
         element.width = image.width;
@@ -453,145 +413,84 @@ Chat.View.Messages = (function(self) {
             element.style.color = style.color;
         }
 
-        if (typeof style.font === 'string') {
+        if (typeof style.font === 'object') {
             element.style.fontFamily = style.font.family;
             element.style.fontSize = style.font.size;
         }
     }
 
-    function createUserName(message, suffix) {
-        var element = Chat.View.createElement('span', 'username');
-
-        element.addEventListener('click', onUserNameClick.bind(null, message.username, message.personal));
-
-        if (typeof message.nameImage === 'object') {
-            element.appendChild(createUserImage(message.nameImage, message.username));
-        } else {
-            element.appendChild(document.createTextNode(message.username));
-        }
-
-        if (typeof suffix === 'string') {
-            element.appendChild(document.createTextNode(suffix));
-        }
-
-        if (typeof message.nameStyle === 'object') {
-            applyElementStyle(element, message.nameStyle);
-        }
-
-        return element;
-    }
-
-    function createText(message) {
-        if (message.subtype === 'join' ||
-            message.subtype === 'leave' ||
-            message.subtype === 'system') {
-
-            var element = Chat.View.createElement('span', 'text'),
-                text = message.text.split('%username%');
-
-            if (text[0].length > 0) {
-                element.appendChild(document.createTextNode(text[0]));
-            }
-
-            for (var i = 1, n = text.length; i < n; i += 1) {
-                element.appendChild(createUserName(message));
-
-                if (text[i].length > 0) {
-                    element.appendChild(document.createTextNode(text[i]));
-                }
-            }
-
-            return element;
-        }
-
-        var element = Chat.View.createElement('span', 'text', message.text);
-
-        if (typeof message.textStyle === 'object') {
-            applyElementStyle(element, message.textStyle);
-        }
-
-        if (message.recipient === true) {
-            if (message.personal !== true) {
-                element.style.fontWeight = 'bold';
-            }
-        }
-
-        return element;
-    }
-
     function fillTimeStamp(message, element) {
-        element.textContent = '[' + Chat.View.formatTimeStamp(message.timestamp) + ']';
+        if (element !== null) {
+            element.textContent = Chat.View.formatTimeStamp(message.timestamp);
 
-        element.addEventListener('click', onTimeStampClick.bind(null, message.timestamp));
+            element.addEventListener('click', onTimeStampClick.bind(null, message.timestamp));
 
-        if (message.recipient === true) {
-            element.classList.add('highlight');
+            if (message.recipient === true) {
+                element.classList.add('highlight');
+            }
         }
     }
 
     function fillUserName(message, element) {
-        element.addEventListener('click', onUserNameClick.bind(null, message.username, message.personal));
+        if (element !== null) {
+            element.addEventListener('click', onUserNameClick.bind(null, message.username, message.personal));
 
-        if (typeof message.nameImage === 'object') {
-            element.appendChild(createUserImage(message.nameImage, message.username));
-        } else {
-            element.textContent = message.username;
-        }
+            if (typeof message.nameImage === 'object') {
+                element.appendChild(createUserImage(message.nameImage, message.username));
+            } else {
+                element.textContent = message.username;
+            }
 
-        if (typeof message.nameStyle === 'object') {
-            applyElementStyle(element, message.nameStyle);
+            if (typeof message.nameStyle === 'object') {
+                applyElementStyle(element, message.nameStyle);
+            }
         }
+    }
+
+    function createUserName(message, container) {
+        var element = document.createElement('span');
+
+        element.classList.add('username');
+
+        fillUserName(message, element);
+
+        container.appendChild(element);
     }
 
     function fillText(message, element) {
-        if (typeof message.textStyle === 'object') {
-            applyElementStyle(element, message.textStyle);
-        }
+        if (element !== null) {
+            var text = message.text.split('%username%', 2);
 
-        element.textContent = message.text;
+            if (text.length === 2) {
+                if (text[0].length !== 0) {
+                    element.appendChild(document.createTextNode(text[0]));
+                }
+
+                createUserName(message, element);
+
+                if (text[1].length !== 0) {
+                    element.appendChild(document.createTextNode(text[1]));
+                }
+            } else {
+                element.textContent = message.text;
+            }
+
+            if (typeof message.textStyle === 'object') {
+                applyElementStyle(element, message.textStyle);
+            }
+        }
     }
 
-    function createMessageElementFromTemplate(message) {
-        var element = Chat.View.cloneTemplateElement('.message');
+    function createMessageElement(message) {
+        var element = Chat.View.cloneTemplateElement('.message.' + message.subtype);
 
         fillTimeStamp(message, element.querySelector('.timestamp'));
         fillUserName(message, element.querySelector('.username'));
         fillText(message, element.querySelector('.text'));
 
-        element.classList.add(message.subtype);
-
         if (message.recipient === true) {
             element.classList.add('received');
         }
-
-        if (message.sender === true) {
-            element.classList.add('sent');
-        }
-
-        return element;
-    }
-
-    function createMessageElement(message) {
-        if (message.subtype === 'public' || message.subtype === 'personal') {
-            return createMessageElementFromTemplate(message);
-        }
-
-        var element = Chat.View.createElement('p', 'message');
-
-        if (typeof message.timestamp === 'number') {
-            element.appendChild(createTimeStamp(message));
-        }
-
-        if (message.subtype !== 'join' &&
-            message.subtype !== 'leave' &&
-            message.subtype !== 'system') {
-
-            element.appendChild(createUserName(message, ':'));
-        }
-
-        element.appendChild(createText(message));
-
-        element.classList.add(message.subtype);
 
         if (message.sender === true) {
             element.classList.add('sent');
@@ -626,28 +525,22 @@ Chat.View.Messages = (function(self) {
         }
     };
 
-    self.addMessages = function(messages) {
+    self.setMessages = function(messages) {
         var updateScroll = shouldUpdateScroll(),
-            fragment = document.createDocumentFragment();
+            content = $content.cloneNode(false);
 
         for (var i = 0, n = messages.length; i < n; i += 1) {
-            fragment.appendChild(createMessageElement(messages[i]));
+            content.appendChild(createMessageElement(messages[i]));
         }
 
-        $content.appendChild(fragment);
+        $content.parentNode.replaceChild(content, $content);
+
+        $content = content;
 
         if (updateScroll === true) {
             scrollToBottom();
         }
     }
-
-    self.clearMessages = function() {
-        var content = $content.cloneNode(false);
-
-        $content.parentNode.replaceChild(content, $content);
-
-        $content = content;
-    };
 
     // Initialization
 
@@ -679,13 +572,12 @@ Chat.Controller.Chat = (function(self) {
         Chat.View.Input.setEnabled(false);
     });
 
-    Chat.Events.subscribe(Chat.User, 'logout', function(e) {
+    Chat.Events.subscribe(Chat.Session, 'logout', function(e) {
         window.location.replace('login.html');
     });
 
     Chat.Events.subscribe(Chat.Message, 'list', function(e) {
-        Chat.View.Messages.clearMessages();
-        Chat.View.Messages.addMessages(e.data);
+        Chat.View.Messages.setMessages(e.data);
     });
 
     Chat.Events.subscribe(Chat.Message, 'new', function(e) {
@@ -744,15 +636,12 @@ Chat.Controller.Chat = (function(self) {
                     break;
 
                 case 'autohide':
-                    Chat.View.Users.autoHide = self.settings.autohide = true;
+                    Chat.View.Users.AutoHide = self.settings.autohide = true;
                     break;
 
                 case 'noautohide':
-                    Chat.View.Users.autoHide = self.settings.autohide = false;
+                    Chat.View.Users.AutoHide = self.settings.autohide = false;
                     break;
-
-                default:
-                    Chat.Message.System.send(command);
             }
         } else {
             if (typeof e.data.username === 'string') {
@@ -764,7 +653,7 @@ Chat.Controller.Chat = (function(self) {
     });
 
     Chat.Events.subscribe(Chat.View.Input, 'exit.clicked', function() {
-        Chat.User.logout();
+        Chat.Session.logout();
     });
 
     // Chat view events listeners
@@ -786,8 +675,8 @@ Chat.Controller.Chat = (function(self) {
 
     self.initialize = function() {
         Chat.Util.mediaQuery('(max-width: 50em)', function(mq) {
-            Chat.View.Users.autoHide = mq.matches || self.settings.autohide;
-            Chat.View.Input.minimized = mq.matches || self.settings.minimized;
+            Chat.View.Users.AutoHide = mq.matches || self.settings.autohide;
+            Chat.View.Input.Minimized = mq.matches || self.settings.minimized;
         });
 
         Chat.View.disableElasticScroll();

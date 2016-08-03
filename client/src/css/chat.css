@@ -73,6 +73,14 @@
     color: #CC9966;
 }
 
+.message .timestamp:before {
+    content: '[';
+}
+
+.message .timestamp:after {
+    content: ']';
+}
+
 .message .timestamp.highlight {
     color: red;
     background-color: white;
@@ -316,6 +324,18 @@
     cursor: pointer;
 }
 
+.user .gender:before {
+    content: '?';
+}
+
+.user .gender.male:before {
+  content: '♂';
+}
+
+.user .gender.female:before {
+  content: '♀';
+}
+
 .user .personal {
     display: table-cell;
     width: 1px;
@@ -326,7 +346,11 @@
     cursor: pointer;
 }
 
-.user .personal.self {
+.user .personal:before {
+    content: '»';
+}
+
+.user.self .personal {
     cursor: auto;
 }
 
@@ -347,7 +371,7 @@
     color: white;
 }
 
-.user .name.self {
+.user.self .name {
     color: #B07050;
     cursor: auto;
 }

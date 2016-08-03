@@ -450,78 +450,109 @@ Chat.Connection = (function(self) {
 })(Chat.Connection || {});
 
 
-Chat.User = (function(self) {
+Chat.Session = (function(self) {
     'use strict';
+
+    // Private methods
+
+    function isSessionActive() {
+        return typeof self.settings.session === 'string';
+    }
+
+    function validateSession() {
+        if (!isSessionActive()) {
+            throw new Error('Session is not active');
+        }
+    }
+
+    function getSessionId() {
+        return self.settings.session;
+    }
+
+    function getUserName() {
+        return self.settings.username;
+    }
 
     // Server events listeners
 
-    Chat.Events.subscribe('chat.server', 'user.session', function(e) {
+    Chat.Events.subscribe('chat.server', 'session.started', function(e) {
         self.settings.session = e.data.session;
     });
 
-    Chat.Events.subscribe('chat.server', 'user.session.error', function(e) {
-        delete self.settings.name;
+    Chat.Events.subscribe('chat.server', 'session.error', function(e) {
+        delete self.settings.username;
         delete self.settings.session;
 
         Chat.Events.publish(self, 'logout', e.data);
     });
 
-    Chat.Events.subscribe('chat.server', 'user.login', function(e) {
-        self.settings.name = e.data.username;
+    Chat.Events.subscribe('chat.server', 'session.login', function(e) {
+        self.settings.username = e.data.username;
         self.settings.session = e.data.session;
 
         Chat.Events.publish(self, 'login', e.data);
     });
 
-    Chat.Events.subscribe('chat.server', 'user.login.error', function(e) {
+    Chat.Events.subscribe('chat.server', 'session.login.error', function(e) {
         Chat.Events.publish(self, 'login.error', e.data);
     });
 
-    Chat.Events.subscribe('chat.server', 'user.logout', function(e) {
-        delete self.settings.name;
+    Chat.Events.subscribe('chat.server', 'session.logout', function(e) {
+        delete self.settings.username;
         delete self.settings.session;
 
         Chat.Events.publish(self, 'logout', e.data);
     });
 
-    Chat.Events.subscribe('chat.server', 'user.logout.error', function(e) {
+    Chat.Events.subscribe('chat.server', 'session.logout.error', function(e) {
         Chat.Events.publish(self, 'logout.error', e.data);
     });
 
     // Core events listeners
 
     Chat.Events.subscribe(Chat.Connection, 'opened', function() {
-        var session = self.getSession();
-
-        if (typeof session === 'string') {
-            Chat.Connection.send({ component: 'chat.client', event: 'user.session', session: session });
+        if (isSessionActive()) {
+            Chat.Connection.send({ component: 'chat.client', event: 'session.restart', session: getSessionId() });
         }
     });
 
     // Public methods
 
     self.login = function(username, password) {
-        Chat.Connection.send({ component: 'chat.client', event: 'user.login', username: username, password: password });
+        Chat.Connection.send({ component: 'chat.client', event: 'session.login', username: username, password: password });
     };
 
     self.logout = function() {
-        Chat.Connection.send({ component: 'chat.client', event: 'user.logout' });
+        Chat.Connection.send({ component: 'chat.client', event: 'session.logout' });
     };
 
-    self.getSession = function() {
-        return self.settings.session;
+    self.isSelf = function(username) {
+        validateSession();
+
+        return self.settings.username.toLowerCase() === username.toLowerCase();
     };
 
-    self.getName = function() {
-        return self.settings.name;
-    };
+    // Public properties
+
+    Object.defineProperty(self, 'Active', {
+        get: function() {
+            return isSessionActive();
+        }
+    });
+
+    Object.defineProperty(self, 'UserName', {
+        get: function() {
+            validateSession();
+            return getUserName();
+        }
+    });
 
     // Initialization
 
-    Chat.register(self, 'user', Chat.PRIORITY_HIGHEST);
+    Chat.register(self, 'session', Chat.PRIORITY_HIGHEST);
 
     return self;
-})(Chat.User || {});
+})(Chat.Session || {});
 
 
 Chat.Users = (function(self) {
@@ -537,16 +568,8 @@ Chat.Users = (function(self) {
         $users = {};
         $count = users.length;
 
-        var username = Chat.User.getName();
-
-        if (typeof username === 'string') {
-            username = username.toLowerCase();
-        }
-
         for (var i = 0; i < $count; i += 1) {
-            var name = users[i].name.toLowerCase();
-            users[i].self = name === username;
-            $users[name] = users[i];
+            $users[users[i].name.toLowerCase()] = users[i];
         }
     }
 
@@ -555,7 +578,7 @@ Chat.Users = (function(self) {
 
         if (!$users.hasOwnProperty(name)) {
             $users[name] = user;
-            $count = $count + 1;
+            $count += 1;
 
             return true;
         }
@@ -570,7 +593,7 @@ Chat.Users = (function(self) {
 
         if ($users.hasOwnProperty(name)) {
             delete $users[name];
-            $count = $count - 1;
+            $count -= 1;
 
             return true;
         }
@@ -699,11 +722,7 @@ Chat.Message.Public = (function(self) {
 
     function prepare(message) {
         if (message.sender !== true) {
-            var username = Chat.User.getName();
-
-            if (typeof username === 'string') {
-                message.recipient = Chat.Util.startsWith(message.text, username);
-            }
+            message.recipient = Chat.Util.startsWith(message.text, Chat.Session.UserName);
         }
     }
 

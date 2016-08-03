@@ -31,7 +31,7 @@ Chat.View.Login = (function(self) {
             var username = $username.value.trim(),
                 password = $password.value.trim();
 
-            if (username.length > 0 && password.length > 0) {
+            if (username.length !== 0 && password.length !== 0) {
                 Chat.Events.publish(self, 'submitted', { username: username, password: password });
             }
         });
@@ -101,12 +101,12 @@ Chat.Controller.Login = (function(self) {
         updateLoginView(false, true, 'Could not connect to chat server', 'darkred');
     });
 
-    Chat.Events.subscribe(Chat.User, 'login', function() {
+    Chat.Events.subscribe(Chat.Session, 'login', function() {
         updateLoginView(false, false, 'Logged in to chat server');
         setTimeout(redirectToChat, 1000);
     });
 
-    Chat.Events.subscribe(Chat.User, 'login.error', function(e) {
+    Chat.Events.subscribe(Chat.Session, 'login.error', function(e) {
         updateLoginView(true, false, 'Could not login to chat server: ' + e.data.reason, 'darkred');
     });
 
@@ -114,7 +114,7 @@ Chat.Controller.Login = (function(self) {
 
     Chat.Events.subscribe(Chat.View.Login, 'submitted', function(e) {
         updateLoginView(false, false, 'Logging in to chat server...');
-        Chat.User.login(e.data.username, e.data.password);
+        Chat.Session.login(e.data.username, e.data.password);
     });
 
     // Public methods
