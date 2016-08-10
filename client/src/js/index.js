@@ -8,7 +8,7 @@ function checkCapabilities() {
     if (typeof WebSocket === 'undefined') {
         unsupported.push({
             title: 'Web Socket is not supported',
-            text: 'WebSocket is a protocol providing full-duplex communications channels over a single TCP connection.'
+            text: 'Web Socket is a protocol providing full-duplex communications channels over a single TCP connection.'
         });
     }
 
@@ -17,7 +17,14 @@ function checkCapabilities() {
 
         unsupported.push({
             title: 'Web Storage is not supported',
-            text: 'Web storage is a software method and protocol used for storing persistent or temporary session data in a web browser.'
+            text: 'The HTML5 storage provides a way for web sites to store information on your computer and retrieve it later.'
+        });
+    }
+
+    if (typeof Worker !== 'undefined') {
+        unsupported.push({
+            title: 'Web Workers are not supported',
+            text: 'Web Workers provide a standard way for browsers to run JavaScript in the background, isolated from the web page.'
         });
     }
 
@@ -26,15 +33,15 @@ function checkCapabilities() {
         typeof JSON.stringify !== 'function') {
 
         unsupported.push({
-            title: 'Native JSON is not supported',
-            text: 'JSON is a native API for parsing and serializing information to the JSON format.'
+            title: 'Native JSON API is not supported',
+            text: 'JSON API provides a standard way for browsers to parse JavaScript Object Notation (JSON) and convert values to JSON.'
         });
     }
 
     if (!('content' in document.createElement('template'))) {
         unsupported.push({
             title: 'HTML template element is not supported',
-            text: 'The HTML template element is a mechanism for holding client-side content that is not to be rendered when a page is loaded but may be instantiated during runtime.'
+            text: 'The HTML5 template element is a mechanism for holding client-side content that is not to be rendered when a page is loaded but may be instantiated during runtime.'
         });
     }
 
@@ -49,7 +56,7 @@ function checkCapabilities() {
         });
     }
 
-    if (unsupported.length > 0) {
+    if (unsupported.length !== 0) {
         successful = false;
     }
 

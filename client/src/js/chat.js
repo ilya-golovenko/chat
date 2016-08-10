@@ -213,7 +213,10 @@ Chat.View.Input = (function(self) {
 
     // Private constants
 
-    var MAX_INPUT_MESSAGES = 50;
+    var UP_KEY = 38,
+        DOWN_KEY = 40,
+        ESC_KEY = 27,
+        MAX_MESSAGES = 50;
 
     // Private members
 
@@ -261,16 +264,20 @@ Chat.View.Input = (function(self) {
 
         $message.addEventListener('keydown', function(e) {
             switch (e.keyCode) {
-                case 38: // up
+                case UP_KEY:
                     if ($current + 1 < $messages.length) {
                         $message.value = $messages[$current += 1];
                     }
                     break;
 
-                case 40: // down
+                case DOWN_KEY:
                     if ($current > 0) {
                         $message.value = $messages[$current -= 1];
                     }
+                    break;
+
+                case ESC_KEY:
+                    $message.value = '';
                     break;
 
                 default:
@@ -290,7 +297,7 @@ Chat.View.Input = (function(self) {
                 $current = 0;
 
                 if ($messages.length < 2 || $messages[1] !== message) {
-                    if ($messages.length > MAX_INPUT_MESSAGES) {
+                    if ($messages.length > MAX_MESSAGES) {
                         $messages.pop();
                     }
 
