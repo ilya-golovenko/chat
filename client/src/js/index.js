@@ -21,7 +21,7 @@ function checkCapabilities() {
         });
     }
 
-    if (typeof Worker !== 'undefined') {
+    if (typeof Worker === 'undefined') {
         unsupported.push({
             title: 'Web Workers are not supported',
             text: 'Web Workers provide a standard way for browsers to run JavaScript in the background, isolated from the web page.'
