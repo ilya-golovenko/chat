@@ -447,14 +447,14 @@ Chat.View.Messages = (function(self) {
         }
     }
 
-    function createUserName(message, container) {
+    function createUserName(message) {
         var element = document.createElement('span');
 
         element.classList.add('username');
 
         fillUserName(message, element);
 
-        container.appendChild(element);
+        return element;
     }
 
     function fillText(message, element) {
@@ -466,7 +466,7 @@ Chat.View.Messages = (function(self) {
                     element.appendChild(document.createTextNode(text[0]));
                 }
 
-                createUserName(message, element);
+                element.appendChild(createUserName(message));
 
                 if (text[1].length !== 0) {
                     element.appendChild(document.createTextNode(text[1]));

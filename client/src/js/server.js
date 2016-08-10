@@ -17,7 +17,7 @@ var Users = (function() {
 
     var $styles = {
       'walrus': { image: { url: 'res/img/users/walrus.gif', width: 84, height: 28 }, text: { color: 'purple' } },
-      //'alexxx': { image: { url: 'res/img/users/alexxx.gif', width: 84, height: 28 }, text: { color: 'black' } },
+      'alexxx': { image: { url: 'res/img/users/alexxx.gif', width: 74, height: 21 }, text: { color: 'black' } },
       'alter': { name: { color: 'olive', font: { family: 'Arial', size: '1.25em' } }, text: { color: 'darkgreen', font: { family: 'Arial', size: '1.25em' } } }
     };
 

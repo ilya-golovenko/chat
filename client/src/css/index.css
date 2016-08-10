@@ -173,8 +173,8 @@
     background-image: url(../res/img/browsers/safari.png);
 }
 
-.update-browser a.iexplorer {
-    background-image: url(../res/img/browsers/iexplorer.png);
+.update-browser a.edge {
+    background-image: url(../res/img/browsers/edge.png);
 }
 
 .update-browser a.opera {

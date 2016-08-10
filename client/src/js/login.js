@@ -3,6 +3,13 @@
     'use strict';
 
 
+// validate session
+
+if (Chat.Session.Active) {
+    return window.location.replace('chat.html');
+}
+
+
 // views
 
 Chat.View.Login = (function(self) {
