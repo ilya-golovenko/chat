@@ -169,23 +169,6 @@ var Messages = (function() {
 })();
 
 
-var Simulator = (function() {
-    function joinUser() {
-    }
-
-    function leaveUser() {
-    }
-
-    function sendPublicMessage() {
-    }
-
-    function sendPersonalMessage() {
-    }
-
-
-});
-
-
 var Server = (function() {
     'use strict';
 
@@ -262,8 +245,17 @@ var Server = (function() {
         }
     }
 
-    function publishServerEvent(event, data) {
-        Chat.Events.publish('chat.server', event, data);
+    function publishServerEvent(event, properties) {
+        var message = {
+            component: 'chat.server',
+            event: event
+        };
+
+        if (typeof properties === 'object') {
+            Chat.Util.extend(message, properties);
+        }
+
+        Chat.Connection.send(message);
     }
 
     function sendMessage(message, username) {
@@ -325,15 +317,11 @@ var Server = (function() {
     }
 
     function sendUserList() {
-        publishServerEvent('users', Users.getOnlineUsers());
+        publishServerEvent('users', { users: Users.getOnlineUsers() });
     }
 
     function sendHistory() {
-        var messages = Messages.getAll();
-
-        if (messages.length > 0) {
-            publishServerEvent('messages', messages);
-        }
+        publishServerEvent('messages', { messages: Messages.getAll() });
     }
 
     function processCommonMessage(message) {

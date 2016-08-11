@@ -128,7 +128,9 @@ Chat.Util = (function(self) {
 
                     self.extend(target[key], mixin[key]);
                 } else {
-                    target[key] = mixin[key];
+                    if (!target.hasOwnProperty(key)) {
+                        target[key] = mixin[key];
+                    }
                 }
             }
         }
@@ -604,9 +606,9 @@ Chat.Users = (function(self) {
     // Server events listeners
 
     Chat.Events.subscribe('chat.server', 'users', function(e) {
-        setUserList(e.data);
+        setUserList(e.data.users);
 
-        Chat.Events.publish(self, 'list', e.data);
+        Chat.Events.publish(self, 'list', e.data.users);
         Chat.Events.publish(self, 'count', { count: $count });
     });
 
@@ -675,11 +677,11 @@ Chat.Message = (function(self) {
     // Server events listeners
 
     Chat.Events.subscribe('chat.server', 'messages', function(e) {
-        for (var i = 0, n = e.data.length; i < n; i += 1) {
-            e.data[i] = prepare(e.data[i]);
+        for (var i = 0, n = e.data.messages.length; i < n; i += 1) {
+            e.data.messages[i] = prepare(e.data.messages[i]);
         }
 
-        Chat.Events.publish(self, 'list', e.data);
+        Chat.Events.publish(self, 'list', e.data.messages);
     });
 
     Chat.Events.subscribe('chat.server', 'message', function(e) {
