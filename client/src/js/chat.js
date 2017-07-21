@@ -5,7 +5,7 @@
 
 // validate session
 
-if (!Chat.Session.Active) {
+if (!Chat.Session.IsValid) {
     return window.location.replace('login.html');
 }
 
@@ -100,27 +100,27 @@ Chat.View.Users = (function(self) {
     };
 
     function autoHideView() {
-      $userlist.classList.add('autohide');
+        $userlist.classList.add('autohide');
 
-      setTimeout(function() {
-          $userlist.classList.add('hidden');
-      }, 0);
+        setTimeout(function() {
+            $userlist.classList.add('hidden');
+        }, 0);
 
-      $userlist.addEventListener('mouseenter', showView);
-      $userlist.addEventListener('mouseleave', hideView);
-      $userlist.addEventListener('blur', hideView, true);
+        $userlist.addEventListener('mouseenter', showView);
+        $userlist.addEventListener('mouseleave', hideView);
+        $userlist.addEventListener('blur', hideView, true);
     }
 
     function noAutoHideView() {
-      $userlist.classList.remove('hidden');
+        $userlist.classList.remove('hidden');
 
-      setTimeout(function() {
-          $userlist.classList.remove('autohide');
-      }, 500);
+        setTimeout(function() {
+            $userlist.classList.remove('autohide');
+        }, 500);
 
-      $userlist.removeEventListener('mouseenter', showView);
-      $userlist.removeEventListener('mouseleave', hideView);
-      $userlist.removeEventListener('blur', hideView, true);
+        $userlist.removeEventListener('mouseenter', showView);
+        $userlist.removeEventListener('mouseleave', hideView);
+        $userlist.removeEventListener('blur', hideView, true);
     }
 
     // Public methods

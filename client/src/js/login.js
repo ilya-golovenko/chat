@@ -5,7 +5,7 @@
 
 // validate session
 
-if (Chat.Session.Active) {
+if (Chat.Session.IsValid) {
     return window.location.replace('chat.html');
 }
 

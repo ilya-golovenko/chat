@@ -457,14 +457,19 @@ Chat.Session = (function(self) {
 
     // Private methods
 
-    function isSessionActive() {
+    function isSessionValid() {
         return typeof self.settings.session === 'string';
     }
 
     function validateSession() {
-        if (!isSessionActive()) {
-            throw new Error('Session is not active');
+        if (!isSessionValid()) {
+            throw new Error('Session is not valid');
         }
+    }
+
+    function invalidateSession() {
+        delete self.settings.username;
+        delete self.settings.session;
     }
 
     function getSessionId() {
@@ -475,6 +480,10 @@ Chat.Session = (function(self) {
         return self.settings.username;
     }
 
+    function isOwnUserName(username) {
+        return self.settings.username.toLowerCase() === username.toLowerCase();
+    }
+
     // Server events listeners
 
     Chat.Events.subscribe('chat.server', 'session.started', function(e) {
@@ -482,8 +491,7 @@ Chat.Session = (function(self) {
     });
 
     Chat.Events.subscribe('chat.server', 'session.error', function(e) {
-        delete self.settings.username;
-        delete self.settings.session;
+        invalidateSession();
 
         Chat.Events.publish(self, 'logout', e.data);
     });
@@ -500,8 +508,7 @@ Chat.Session = (function(self) {
     });
 
     Chat.Events.subscribe('chat.server', 'session.logout', function(e) {
-        delete self.settings.username;
-        delete self.settings.session;
+        invalidateSession();
 
         Chat.Events.publish(self, 'logout', e.data);
     });
@@ -513,7 +520,7 @@ Chat.Session = (function(self) {
     // Core events listeners
 
     Chat.Events.subscribe(Chat.Connection, 'opened', function() {
-        if (isSessionActive()) {
+        if (isSessionValid()) {
             Chat.Connection.send({ component: 'chat.client', event: 'session.restart', session: getSessionId() });
         }
     });
@@ -531,20 +538,21 @@ Chat.Session = (function(self) {
     self.isSelf = function(username) {
         validateSession();
 
-        return self.settings.username.toLowerCase() === username.toLowerCase();
+        return isOwnUserName(username);
     };
 
     // Public properties
 
-    Object.defineProperty(self, 'Active', {
+    Object.defineProperty(self, 'IsValid', {
         get: function() {
-            return isSessionActive();
+            return isSessionValid();
         }
     });
 
     Object.defineProperty(self, 'UserName', {
         get: function() {
             validateSession();
+
             return getUserName();
         }
     });
